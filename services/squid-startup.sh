@@ -2,7 +2,7 @@
 
 set -e
 
-if [ "${DEBUG}" == true ]; then
+if [ "${DEBUG}" = true ]; then
   set -x
 fi
 
@@ -30,9 +30,9 @@ sed -i "s/^#http_access allow localnet/http_access allow localnet/" /etc/squid3/
 sed -i "s/^#cache_dir .*/cache_dir ufs \/var\/cache\/squid3 ${SQUID_DISK_CACHE_SIZE} 16 256/" /etc/squid3/squid.conf
 sed -i "s/^# maximum_object_size .*/maximum_object_size ${SQUID_MAXIMUM_OBJECT_SIZE} MB/" /etc/squid3/squid.conf
 
-sed -i "s/^http_port .*/http_port ${SQUID_HTTP_PORT}/" /etc/squid3/squid.conf
+sed -i "s/^http_port .*/http_port 172.17.0.1:${SQUID_HTTP_PORT}/" /etc/squid3/squid.conf
 
-echo "http_port ${SQUID_INTERCEPT_PORT} intercept" >> /etc/squid3/squid.conf
+echo "http_port 172.17.0.1:${SQUID_INTERCEPT_PORT} intercept" >> /etc/squid3/squid.conf
 
 if [ ! x"${SQUID_CACHE_PEER_HOST}" = "x" ] && [ ! x"${SQUID_CACHE_PEER_PORT}" = "x" ]; then
   if [ ! x"${SQUID_CACHE_PEER_AUTH}" = "x" ]; then
@@ -43,6 +43,17 @@ if [ ! x"${SQUID_CACHE_PEER_HOST}" = "x" ] && [ ! x"${SQUID_CACHE_PEER_PORT}" = 
     echo "never_direct allow all" >> /etc/squid3/squid.conf
   fi
 fi
+
+cat <<EOT >> /etc/squid3/squid.conf
+
+# refresh pattern for debs and udebs
+refresh_pattern deb$     20160 100% 20160
+refresh_pattern udeb$    20160 100% 20160
+refresh_pattern tar.gz$  20160 100% 20160
+refresh_pattern Release$      1440  40%   20160
+refresh_pattern Sources.gz$   1440  40%   20160
+refresh_pattern Packages.gz$  1440  40%   20160
+EOT
 
 mkdir -p /var/cache/squid3
 chown -R proxy:proxy /var/cache/squid3

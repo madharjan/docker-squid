@@ -3,7 +3,7 @@ set -e
 export LC_ALL=C
 export DEBIAN_FRONTEND=noninteractive
 
-if [ "${DEBUG}" == true ]; then
+if [ "${DEBUG}" = true ]; then
   set -x
 fi
 
@@ -20,3 +20,7 @@ apt-get install -y --no-install-recommends iptables
 mkdir -p /etc/my_init.d
 cp /build/services/squid-startup.sh /etc/my_init.d
 chmod 750 /etc/my_init.d/squid-startup.sh
+
+mkdir -p /etc/my_shutdown.d
+cp /build/services/iptables-remove.sh /etc/my_shutdown.d
+chmod 750 /etc/my_shutdown.d/iptables-remove.sh
