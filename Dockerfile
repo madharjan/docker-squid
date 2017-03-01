@@ -15,7 +15,7 @@ COPY . /build
 
 RUN /build/scripts/install.sh && /build/scripts/cleanup.sh
 
-VOLUME ["/etc/squid/", "/var/log/squid"]
+VOLUME ["/var/cache/squid3/", "/var/log/squid3"]
 
 CMD ["/sbin/my_init"]
 

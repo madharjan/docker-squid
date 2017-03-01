@@ -19,6 +19,15 @@ run:
 
 	docker run -d \
 		-e DEBUG=true \
+		--name squid_default $(NAME):$(VERSION)
+
+	sleep 2
+
+	docker run -d \
+		--link squid_default:proxy \
+		-e DEBUG=true \
+		-e SQUID_CACHE_PEER_HOST=proxy \
+		-e SQUID_CACHE_PEER_PORT=3128 \
 		-v /tmp/squid/cache:/var/cache/squid3 \
 		--name squid $(NAME):$(VERSION)
 
@@ -39,8 +48,8 @@ clean:
 	docker exec squid /bin/bash -c "sv stop squid" || true
 	sleep 2
 	docker exec squid /bin/bash -c "rm -rf /var/cache/squid3/*" || true
-	docker stop squid squid_no_squid || true
-	docker rm squid squid_no_squid || true
+	docker stop squid squid_default squid_no_squid || true
+	docker rm squid squid_default squid_no_squid || true
 	rm -rf /tmp/squid || true
 
 tag_latest:
@@ -51,6 +60,7 @@ release: run tests clean tag_latest
 	@if ! head -n 1 Changelog.md | grep -q 'release date'; then echo 'Please note the release date in Changelog.md.' && false; fi
 	docker push $(NAME)
 	@echo "*** Don't forget to create a tag. git tag $(VERSION) && git push origin $(VERSION) ***"
+
 	curl -X POST https://hooks.microbadger.com/images/madharjan/docker-squid/Y7V64vqIP3mXfQarb7lAU8uE2XU=
 
 clean_images:
