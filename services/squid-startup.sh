@@ -48,13 +48,14 @@ fi
 cat <<EOT >> /etc/squid3/squid.conf
 
 # refresh pattern for debs and udebs
-refresh_pattern deb$     20160 100% 20160
-refresh_pattern udeb$    20160 100% 20160
-refresh_pattern tar.gz$  20160 100% 20160
+refresh_pattern deb$         20160 100%   20160
+refresh_pattern udeb$        20160 100%   20160
+refresh_pattern tar.gz$      20160 100%   20160
 refresh_pattern Release$      1440  40%   20160
 refresh_pattern Sources.gz$   1440  40%   20160
 refresh_pattern Packages.gz$  1440  40%   20160
 refresh_pattern cvd$          1440  40%   20160
+refresh_all_ims on
 EOT
 
 mkdir -p /var/cache/squid3

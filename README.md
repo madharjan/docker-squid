@@ -1,5 +1,7 @@
 # docker-squid
 
+[![](https://images.microbadger.com/badges/image/madharjan/docker-squid.svg)](https://microbadger.com/images/madharjan/docker-squid "Get your own image badge on microbadger.com")
+
 Docker container for Squid Proxy based on [madharjan/docker-base](https://github.com/madharjan/docker-base/)
 
 * Squid 3.3.8 (docker-squid)

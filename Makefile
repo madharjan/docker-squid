@@ -60,8 +60,7 @@ release: run tests clean tag_latest
 	@if ! head -n 1 Changelog.md | grep -q 'release date'; then echo 'Please note the release date in Changelog.md.' && false; fi
 	docker push $(NAME)
 	@echo "*** Don't forget to create a tag. git tag $(VERSION) && git push origin $(VERSION) ***"
-
-	curl -X POST https://hooks.microbadger.com/images/madharjan/docker-squid/Y7V64vqIP3mXfQarb7lAU8uE2XU=
-
+	curl -X POST https://hooks.microbadger.com/images/madharjan/docker-squid/tURQR95JmBIZXtpNjAkk35k_tDc=
+	
 clean_images:
 	docker rmi $(NAME):latest $(NAME):$(VERSION) || true
