@@ -12,6 +12,7 @@ docker run -d \
   --network=host \
   -e DEBUG=true \
   --cap-add=NET_ADMIN \
+  -e SQUID_INTERFACE_IP=172.17.0.1 \
   -e SQUID_HTTP_PORT=9128 \
   -e SQUID_INTERCEPT_PORT=9129 \
   -e SQUID_DISK_CACHE_SIZE=15000 \

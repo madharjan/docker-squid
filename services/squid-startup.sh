@@ -7,6 +7,7 @@ if [ "${DEBUG}" = true ]; then
 fi
 
 DISABLE_SQUID=${DISABLE_SQUID:-0}
+SQUID_INTERFACE_IP=${SQUID_INTERFACE_IP:-}
 SQUID_HTTP_PORT=${SQUID_HTTP_PORT:-3128}
 SQUID_INTERCEPT_PORT=${SQUID_INTERCEPT_PORT:-3129}
 SQUID_MAXIMUM_OBJECT_SIZE=${SQUID_MAXIMUM_OBJECT_SIZE:-1024}
@@ -30,9 +31,9 @@ sed -i "s/^#http_access allow localnet/http_access allow localnet/" /etc/squid3/
 sed -i "s/^#cache_dir .*/cache_dir ufs \/var\/cache\/squid3 ${SQUID_DISK_CACHE_SIZE} 16 256/" /etc/squid3/squid.conf
 sed -i "s/^# maximum_object_size .*/maximum_object_size ${SQUID_MAXIMUM_OBJECT_SIZE} MB/" /etc/squid3/squid.conf
 
-sed -i "s/^http_port .*/http_port 172.17.0.1:${SQUID_HTTP_PORT}/" /etc/squid3/squid.conf
+sed -i "s/^http_port .*/http_port ${SQUID_INTERFACE_IP}:${SQUID_HTTP_PORT}/" /etc/squid3/squid.conf
 
-echo "http_port 172.17.0.1:${SQUID_INTERCEPT_PORT} intercept" >> /etc/squid3/squid.conf
+echo "http_port ${SQUID_INTERFACE_IP}:${SQUID_INTERCEPT_PORT} intercept" >> /etc/squid3/squid.conf
 
 if [ ! x"${SQUID_CACHE_PEER_HOST}" = "x" ] && [ ! x"${SQUID_CACHE_PEER_PORT}" = "x" ]; then
   if [ ! x"${SQUID_CACHE_PEER_AUTH}" = "x" ]; then
@@ -53,6 +54,7 @@ refresh_pattern tar.gz$  20160 100% 20160
 refresh_pattern Release$      1440  40%   20160
 refresh_pattern Sources.gz$   1440  40%   20160
 refresh_pattern Packages.gz$  1440  40%   20160
+refresh_pattern cvd$          1440  40%   20160
 EOT
 
 mkdir -p /var/cache/squid3

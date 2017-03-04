@@ -9,6 +9,7 @@ Docker container for Squid Proxy based on [madharjan/docker-base](https://github
 | Variable                  | Default | Example        |
 |---------------------------|---------|----------------|
 | DISABLE_SQUID             | 0       | 1 (to disable) |
+| SQUID_INTERFACE_IP        |         | 170.17.42.1    |
 | SQUID_HTTP_PORT           | 3128    | 8080           |
 | SQUID_INTERCEPT_PORT      | 3129    | 8081           |
 | SQUID_MAXIMUM_OBJECT_SIZE | 1024    | 512  (MB)      |
@@ -79,7 +80,7 @@ docker run -d \
   madharjan/docker-squid:3.3.8
 ```
 
-Run as Transparent Proxy
+**Run as Transparent Proxy**
 ```
 docker stop squid
 docker rm squid
@@ -87,7 +88,8 @@ docker rm squid
 docker run -d \
   --network=host \
   --cap-add=NET_ADMIN \
-  -e SQUID_HTTP_PORT=8080 \
+  -e SQUID_HTTP_PORT=9090 \
+  -e SQUID_INTERCEPT_PORT=9091 \
   -e SQUID_CACHE_PEER_HOST=proxyHost \
   -e SQUID_CACHE_PEER_PORT=proxyPort \  
   -e ENABLE_TRANSPARENT_PROXY=1 \
@@ -117,7 +119,7 @@ ExecStart=/usr/bin/docker run \
   -p 8080:3128 \
   -v /opt/docker/squid/cache:/var/cache/squid3 \
   -v /opt/docker/squid/log:/var/log/squid3 \
-  --name nginx \
+  --name squid \
   madharjan/docker-squid:3.3.8
 
 ExecStop=/usr/bin/docker stop -t 2 squid
