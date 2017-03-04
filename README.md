@@ -9,7 +9,7 @@ Docker container for Squid Proxy based on [madharjan/docker-base](https://github
 | Variable                  | Default | Example        |
 |---------------------------|---------|----------------|
 | DISABLE_SQUID             | 0       | 1 (to disable) |
-| SQUID_INTERFACE_IP        |         | 170.17.42.1    |
+| SQUID_INTERFACE_IP        | 0.0.0.0 | 170.17.42.1    |
 | SQUID_HTTP_PORT           | 3128    | 8080           |
 | SQUID_INTERCEPT_PORT      | 3129    | 8081           |
 | SQUID_MAXIMUM_OBJECT_SIZE | 1024    | 512  (MB)      |
