@@ -4,7 +4,24 @@
 
 Docker container for Squid Proxy based on [madharjan/docker-base](https://github.com/madharjan/docker-base/)
 
-* Squid 3.3.8 (docker-squid)
+Squid configuration and Transparent Proxy configuration based on [jpetazzo/squid-in-a-can](https://github.com/jpetazzo/squid-in-a-can)
+
+**Changes**
+* Squid and iptables in single container
+* Install `iptables` config if run as Transparent Proxy and cleanup `iptables` config on container stop
+
+**Features**
+* Environment variables to set upstream proxy & authentication
+* Environment variables to set cache settings
+* Bats ([sstephenson/bats](https://github.com/sstephenson/bats/)) based test cases
+
+**Usages**
+* Run `docker-squid` as Transparent Proxy while `docker build` to speedup build time by caching  OS packages downloads
+* Run `docker-squid` as Transparent Proxy while `docker build` behind Corporate Proxy WITHOUT changing Dockerfile *(works only if all downloads from Internet is HTTP only, NOT HTTPS)*
+* Run `docker-squid` to conserve bandwidth on slow Internet connection by caching frequently downloaded files
+
+
+## Squid 3.3.8 (docker-squid)
 
 **Environment**
 

@@ -55,6 +55,7 @@ refresh_pattern Release$      1440  40%   20160
 refresh_pattern Sources.gz$   1440  40%   20160
 refresh_pattern Packages.gz$  1440  40%   20160
 refresh_pattern cvd$          1440  40%   20160
+refresh_pattern .                0  20%    1440
 refresh_all_ims on
 EOT
 
