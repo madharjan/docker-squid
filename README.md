@@ -1,21 +1,24 @@
 # docker-squid
 
-[![](https://images.microbadger.com/badges/image/madharjan/docker-squid.svg)](https://microbadger.com/images/madharjan/docker-squid "Get your own image badge on microbadger.com")
+[![Build Status](https://travis-ci.com/madharjan/docker-squid.svg?branch=master)](https://travis-ci.com/madharjan/docker-squid)
+[![Layers](https://images.microbadger.com/badges/image/madharjan/docker-squid.svg)](http://microbadger.com/images/madharjan/docker-squid)
 
 Docker container for Squid Proxy based on [madharjan/docker-base](https://github.com/madharjan/docker-base/)
 
 Squid configuration and Transparent Proxy configuration based on [jpetazzo/squid-in-a-can](https://github.com/jpetazzo/squid-in-a-can)
 
-**Changes**
+## Changes
+
 * Squid and iptables in single container
 * Install `iptables` config if run as Transparent Proxy and cleanup `iptables` config on container stop
 
-**Features**
+## Features
+
 * Environment variables to set upstream proxy & authentication
 * Environment variables to set cache settings
 * Bats ([sstephenson/bats](https://github.com/sstephenson/bats/)) based test cases
 
-**Usages**
+## Usages
 * Run `docker-squid` as Transparent Proxy while `docker build` to speedup build time by caching  OS packages downloads
 * Run `docker-squid` as Transparent Proxy while `docker build` behind Corporate Proxy WITHOUT changing Dockerfile *(works only if all downloads from Internet is HTTP only, NOT HTTPS)*
 * Run `docker-squid` to conserve bandwidth on slow Internet connection by caching frequently downloaded files
@@ -41,14 +44,16 @@ Squid configuration and Transparent Proxy configuration based on [jpetazzo/squid
 
 ## Build
 
-**Clone this project**
-```
+### Clone this project
+
+```bash
 git clone https://github.com/madharjan/docker-squid
 cd docker-squid
 ```
 
-**Build Container**
-```
+### Build Container
+
+```bash
 # login to DockerHub
 docker login
 
@@ -63,29 +68,28 @@ make clean
 # tag
 make tag_latest
 
-# update Changelog.md
 # release
 make release
 ```
 
-**Tag and Commit to Git**
-```
-git tag 3.3.8
-git push origin 3.3.8
+### Tag and Commit to Git
+
+```bash
+git tag 3.5.12
+git push origin 3.5.12
 ```
 
 ## Run Container
 
-### Squid
-
-**Prepare folder on host for container volumes**
+### Prepare folder on host for container volumes
 ```
 sudo mkdir -p /opt/docker/squid/cache/
 sudo mkdir -p /opt/docker/squid/log/
 ```
 
-**Run `docker-squid`**
-```
+### Run `docker-squid`
+
+```bash
 docker stop squid
 docker rm squid
 
@@ -93,14 +97,15 @@ docker run -d \
   -p 8080:3128 \
   -e SQUID_CACHE_PEER_HOST=proxyHost \
   -e SQUID_CACHE_PEER_PORT=proxyPort \  
-  -v /opt/docker/squid/cache:/var/cache/squid3 \
-  -v /opt/docker/squid/log:/var/log/squid3 \
+  -v /opt/docker/squid/cache:/var/cache/squid \
+  -v /opt/docker/squid/log:/var/log/squid \
   --name squid \
-  madharjan/docker-squid:3.3.8
+  madharjan/docker-squid:3.5.12
 ```
 
-**Run as Transparent Proxy**
-```
+## Run as Transparent Proxy
+
+```bash
 docker stop squid
 docker rm squid
 
@@ -112,14 +117,17 @@ docker run -d \
   -e SQUID_CACHE_PEER_HOST=proxyHost \
   -e SQUID_CACHE_PEER_PORT=proxyPort \  
   -e ENABLE_TRANSPARENT_PROXY=1 \
-  -v /opt/docker/squid/cache:/var/cache/squid3 \
-  -v /opt/docker/squid/log:/var/log/squid3 \
+  -v /opt/docker/squid/cache:/var/cache/squid \
+  -v /opt/docker/squid/log:/var/log/squid \
   --name squid \
-  madharjan/docker-squid:3.3.8
+  madharjan/docker-squid:3.5.12
 ```
 
-**Systemd Unit File**
-```
+## Run via Systemd
+
+### Systemd Unit File - basic example
+
+```txt
 [Unit]
 Description=Squid
 
@@ -132,14 +140,14 @@ ExecStartPre=-/bin/mkdir -p /opt/docker/squid/cache
 ExecStartPre=-/bin/mkdir -p /opt/docker/squid/log
 ExecStartPre=-/usr/bin/docker stop squid
 ExecStartPre=-/usr/bin/docker rm squid
-ExecStartPre=-/usr/bin/docker pull madharjan/docker-squid:3.3.8
+ExecStartPre=-/usr/bin/docker pull madharjan/docker-squid:3.5.12
 
 ExecStart=/usr/bin/docker run \
   -p 8080:3128 \
-  -v /opt/docker/squid/cache:/var/cache/squid3 \
-  -v /opt/docker/squid/log:/var/log/squid3 \
+  -v /opt/docker/squid/cache:/var/cache/squid \
+  -v /opt/docker/squid/log:/var/log/squid \
   --name squid \
-  madharjan/docker-squid:3.3.8
+  madharjan/docker-squid:3.5.12
 
 ExecStop=/usr/bin/docker stop -t 2 squid
 

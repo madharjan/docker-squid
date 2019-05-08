@@ -18,9 +18,9 @@ apt-get update
 apt-get install -y --no-install-recommends iptables
 
 mkdir -p /etc/my_init.d
-cp /build/services/squid-startup.sh /etc/my_init.d
-chmod 750 /etc/my_init.d/squid-startup.sh
+cp /build/services/12-squid.sh /etc/my_init.d
+chmod 750 /etc/my_init.d/12-squid.sh
 
 mkdir -p /etc/my_shutdown.d
-cp /build/services/iptables-remove.sh /etc/my_shutdown.d
-chmod 750 /etc/my_shutdown.d/iptables-remove.sh
+cp /build/services/88-iptables.sh /etc/my_shutdown.d
+chmod 750 /etc/my_shutdown.d/88-iptables.sh

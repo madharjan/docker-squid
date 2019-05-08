@@ -1,4 +1,4 @@
-FROM madharjan/docker-base:14.04
+FROM madharjan/docker-base:16.04
 MAINTAINER Madhav Raj Maharjan <madhav.maharjan@gmail.com>
 
 ARG VCS_REF
@@ -15,7 +15,7 @@ COPY . /build
 
 RUN /build/scripts/install.sh && /build/scripts/cleanup.sh
 
-VOLUME ["/var/cache/squid3/", "/var/log/squid3"]
+VOLUME ["/var/cache/squid/", "/var/log/squid"]
 
 CMD ["/sbin/my_init"]
 

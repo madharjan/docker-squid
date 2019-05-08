@@ -25,27 +25,27 @@ else
   rm -f /etc/service/squid/down
 fi
 
-sed -i "s/^#acl localnet/acl localnet/" /etc/squid3/squid.conf
-sed -i "s/^#http_access allow localnet/http_access allow localnet/" /etc/squid3/squid.conf
+sed -i "s/^#acl localnet/acl localnet/" /etc/squid/squid.conf
+sed -i "s/^#http_access allow localnet/http_access allow localnet/" /etc/squid/squid.conf
 
-sed -i "s/^#cache_dir .*/cache_dir ufs \/var\/cache\/squid3 ${SQUID_DISK_CACHE_SIZE} 16 256/" /etc/squid3/squid.conf
-sed -i "s/^# maximum_object_size .*/maximum_object_size ${SQUID_MAXIMUM_OBJECT_SIZE} MB/" /etc/squid3/squid.conf
+sed -i "s/^#cache_dir .*/cache_dir ufs \/var\/cache\/squid ${SQUID_DISK_CACHE_SIZE} 16 256/" /etc/squid/squid.conf
+sed -i "s/^# maximum_object_size .*/maximum_object_size ${SQUID_MAXIMUM_OBJECT_SIZE} MB/" /etc/squid/squid.conf
 
-sed -i "s/^http_port .*/http_port ${SQUID_INTERFACE_IP}:${SQUID_HTTP_PORT}/" /etc/squid3/squid.conf
+sed -i "s/^http_port .*/http_port ${SQUID_INTERFACE_IP}:${SQUID_HTTP_PORT}/" /etc/squid/squid.conf
 
-echo "http_port ${SQUID_INTERFACE_IP}:${SQUID_INTERCEPT_PORT} intercept" >> /etc/squid3/squid.conf
+echo "http_port ${SQUID_INTERFACE_IP}:${SQUID_INTERCEPT_PORT} intercept" >> /etc/squid/squid.conf
 
 if [ ! x"${SQUID_CACHE_PEER_HOST}" = "x" ] && [ ! x"${SQUID_CACHE_PEER_PORT}" = "x" ]; then
   if [ ! x"${SQUID_CACHE_PEER_AUTH}" = "x" ]; then
-    echo "cache_peer ${SQUID_CACHE_PEER_HOST} parent ${SQUID_CACHE_PEER_PORT} 0 proxy-only default no-query no-digest no-delay login=${SQUID_CACHE_PEER_AUTH}" >> /etc/squid3/squid.conf
-    echo "never_direct allow all" >> /etc/squid3/squid.conf
+    echo "cache_peer ${SQUID_CACHE_PEER_HOST} parent ${SQUID_CACHE_PEER_PORT} 0 proxy-only default no-query no-digest no-delay login=${SQUID_CACHE_PEER_AUTH}" >> /etc/squid/squid.conf
+    echo "never_direct allow all" >> /etc/squid/squid.conf
   else
-    echo "cache_peer ${SQUID_CACHE_PEER_HOST} parent ${SQUID_CACHE_PEER_PORT} 0 proxy-only default no-query no-digest no-delay" >> /etc/squid3/squid.conf
-    echo "never_direct allow all" >> /etc/squid3/squid.conf
+    echo "cache_peer ${SQUID_CACHE_PEER_HOST} parent ${SQUID_CACHE_PEER_PORT} 0 proxy-only default no-query no-digest no-delay" >> /etc/squid/squid.conf
+    echo "never_direct allow all" >> /etc/squid/squid.conf
   fi
 fi
 
-cat <<EOT >> /etc/squid3/squid.conf
+cat <<EOT >> /etc/squid/squid.conf
 
 # refresh pattern for debs and udebs
 refresh_pattern deb$         20160 100%   20160
@@ -59,10 +59,10 @@ refresh_pattern .                0  20%    1440
 refresh_all_ims on
 EOT
 
-mkdir -p /var/cache/squid3
-chown -R proxy:proxy /var/cache/squid3
+mkdir -p /var/cache/squid
+chown -R proxy:proxy /var/cache/squid
 
-/usr/sbin/squid3 -z
+/usr/sbin/squid -z
 
 if [ "${ENABLE_TRANSPARENT_PROXY}" -eq 1 ]; then
   iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to ${SQUID_INTERCEPT_PORT} -w
