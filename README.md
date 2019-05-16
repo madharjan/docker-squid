@@ -26,7 +26,7 @@ Squid configuration and Transparent Proxy configuration based on [jpetazzo/squid
 
 ## Squid 3.3.8 (docker-squid)
 
-**Environment**
+### Environment
 
 | Variable                  | Default | Example        |
 |---------------------------|---------|----------------|
@@ -82,7 +82,8 @@ git push origin 3.5.12
 ## Run Container
 
 ### Prepare folder on host for container volumes
-```
+
+```bash
 sudo mkdir -p /opt/docker/squid/cache/
 sudo mkdir -p /opt/docker/squid/log/
 ```
@@ -153,4 +154,29 @@ ExecStop=/usr/bin/docker stop -t 2 squid
 
 [Install]
 WantedBy=multi-user.target
+```
+
+### Generate Systemd Unit File
+
+| Variable                 | Default          | Example                                                          |
+|--------------------------|------------------|------------------------------------------------------------------|
+| PORT                     |                  | 3128                                                             |
+| VOLUME_HOME              | /opt/docker      | /opt/data                                                        |
+| VERSION                  | 1.0              | latest                                                           |                                                           |
+| SQUID_CACHE_PEER_HOST    |                  | proxy.domain.com                                                             |
+| SQUID_CACHE_PEER_PORT    |                  | 8080                                                             |
+
+```bash
+docker run --rm -it \
+  -e PORT=3128 \
+  -e VOLUME_HOME=/opt/docker \
+  -e VERSION=3.5.12 \
+  -e SQUID_CACHE_PEER_HOST=proxy.domain.com \
+  -e SQUID_CACHE_PEER_PORT=8080 \  
+  madharjan/docker-squid:3.5.12 \
+  template-systemd-unit | \
+  sudo tee /etc/systemd/system/template.service
+
+sudo systemctl enable template
+sudo systemctl start template
 ```

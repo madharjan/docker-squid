@@ -1,0 +1,58 @@
+#!/bin/sh
+
+set e
+
+if [ "${DEBUG}" = true ]; then
+  set -x
+fi
+
+DEF_PORT=
+DEF_VOLUME_HOME=/opt/docker
+DEF_VERSION=3.5.12
+DEF_NAME=squid
+
+DEF_SQUID_CACHE_PEER_HOST=
+DEF_SQUID_CACHE_PEER_PORT=
+
+PORT=${PORT:-$DEF_PORT}
+VOLUME_HOME=${VOLUME_HOME:-$DEF_VOLUME_HOME}
+VERSION=${VERSION:-$DEF_VERSION}
+NAME=${NAME:-$DEF_NAME}
+
+SQUID_CACHE_PEER_HOST=${SQUID_CACHE_PEER_HOST:-$DEF_SQUID_CACHE_PEER_HOST}
+SQUID_CACHE_PEER_PORT=${SQUID_CACHE_PEER_PORT:-$DEF_SQUID_CACHE_PEER_PORT}
+
+if [ -z ${PORT} ]; then
+  PORT_LINE=""
+else 
+  PORT_LINE="-p ${PORT}:5432 "
+fi
+
+/bin/cat <<-EOF
+[Unit]
+Description=Template SQL Server
+
+After=docker.service
+
+[Service]
+TimeoutStartSec=0
+
+ExecStartPre=-/bin/mkdir -p ${VOLUME_HOME}/${NAME}/cache
+ExecStartPre=-/bin/mkdir -p ${VOLUME_HOME}/${NAME}/log
+ExecStartPre=-/usr/bin/docker stop ${NAME}
+ExecStartPre=-/usr/bin/docker rm ${NAME}
+ExecStartPre=-/usr/bin/docker pull madharjan/docker-squid:${VERSION}
+
+ExecStart=/usr/bin/docker run \\
+  -e SQUID_CACHE_PEER_HOST=${SQUID_CACHE_PEER_HOST} \\
+  -e SQUID_CACHE_PEER_PORT=${SQUID_CACHE_PEER_PORT} \\
+  ${PORT_LINE}-v -v ${VOLUME_HOME}/${NAME}/lib:/var/cache/squid \\
+  -v ${VOLUME_HOME}/${NAME}/log:/var/log/squid \\
+  --name ${NAME} \\
+  madharjan/docker-squid:${VERSION}
+
+ExecStop=/usr/bin/docker stop -t 2 ${NAME}
+
+[Install]
+WantedBy=multi-user.target
+EOF

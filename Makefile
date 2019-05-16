@@ -4,7 +4,7 @@ VERSION = 3.5.12
 
 DEBUG ?= true
 
-.PHONY: all build run tests clean tag_latest release clean_images
+.PHONY: all build run tests stop clean tag_latest release clean_images
 
 all: build
 
@@ -72,6 +72,7 @@ stop:
 clean:stop
 	docker rm squid squid_default squid_no_squid || true
 	rm -rf /tmp/squid || true
+	docker images | grep "^<none>" | awk '{print$3 }' | xargs docker rmi || true
 
 stop_t:
 	docker exec squid_t /bin/bash -c "sv stop squid" || true
@@ -90,7 +91,7 @@ release: run tests clean tag_latest
 	@if ! docker images $(NAME) | awk '{ print $$2 }' | grep -q -F $(VERSION); then echo "$(NAME) version $(VERSION) is not yet built. Please run 'make build'"; false; fi
 	docker push $(NAME)
 	@echo "*** Don't forget to create a tag. git tag $(VERSION) && git push origin $(VERSION) ***"
-	curl -s -X POST https://hooks.microbadger.com/images/madharjan/docker-squid/tURQR95JmBIZXtpNjAkk35k_tDc=
-	
+	curl -s -X POST https://hooks.microbadger.com/images/$(NAME)/tURQR95JmBIZXtpNjAkk35k_tDc=
+
 clean_images:
 	docker rmi $(NAME):latest $(NAME):$(VERSION) || true
