@@ -60,9 +60,8 @@ refresh_all_ims on
 EOT
 
 mkdir -p /var/cache/squid
-chown -R proxy:proxy /var/cache/squid
-
 /usr/sbin/squid -z
+chown -R proxy:proxy /var/cache/squid
 
 if [ "${ENABLE_TRANSPARENT_PROXY}" -eq 1 ]; then
   iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to ${SQUID_INTERCEPT_PORT} -w

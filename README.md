@@ -167,7 +167,7 @@ WantedBy=multi-user.target
 | SQUID_CACHE_PEER_PORT    |                  | 8080                                                             |
 
 ```bash
-docker run --rm -it \
+docker run --rm \
   -e PORT=3128 \
   -e VOLUME_HOME=/opt/docker \
   -e VERSION=3.5.12 \
