@@ -44,72 +44,47 @@ Squid configuration and Transparent Proxy configuration based on [jpetazzo/squid
 
 ## Build
 
-### Clone this project
-
 ```bash
+# clone project
 git clone https://github.com/madharjan/docker-squid
 cd docker-squid
-```
-
-### Build Container
-
-```bash
-# login to DockerHub
-docker login
 
 # build
 make
 
 # tests
 make run
-make tests
+make test
+
+# clean
 make clean
-
-# tag
-make tag_latest
-
-# release
-make release
 ```
 
-### Tag and Commit to Git
+## Run
+
+**Note**: update environment variables below as necessary
 
 ```bash
-git tag 3.5.12
-git push origin 3.5.12
-```
-
-## Run Container
-
-### Prepare folder on host for container volumes
-
-```bash
+# prepare foldor on host for container volumes
 sudo mkdir -p /opt/docker/squid/cache/
 sudo mkdir -p /opt/docker/squid/log/
-```
 
-### Run `docker-squid`
-
-```bash
+# stop & remove previous instances
 docker stop squid
 docker rm squid
 
+# run container
 docker run -d \
   -p 8080:3128 \
-  -e SQUID_CACHE_PEER_HOST=proxyHost \
-  -e SQUID_CACHE_PEER_PORT=proxyPort \  
+  -e SQUID_CACHE_PEER_HOST=[ProxyHost] \
+  -e SQUID_CACHE_PEER_PORT=[ProxyPort] \  
   -v /opt/docker/squid/cache:/var/cache/squid \
   -v /opt/docker/squid/log:/var/log/squid \
   --name squid \
   madharjan/docker-squid:3.5.12
-```
 
-## Run as Transparent Proxy
 
-```bash
-docker stop squid
-docker rm squid
-
+# run container as transparent proxy
 docker run -d \
   --network=host \
   --cap-add=NET_ADMIN \
@@ -120,13 +95,13 @@ docker run -d \
   -e ENABLE_TRANSPARENT_PROXY=1 \
   -v /opt/docker/squid/cache:/var/cache/squid \
   -v /opt/docker/squid/log:/var/log/squid \
-  --name squid \
+  --name squid_t \
   madharjan/docker-squid:3.5.12
 ```
 
-## Run via Systemd
+## Systemd Unit File
 
-### Systemd Unit File - basic example
+**Note**: update environment variables below as necessary
 
 ```txt
 [Unit]
@@ -156,17 +131,18 @@ ExecStop=/usr/bin/docker stop -t 2 squid
 WantedBy=multi-user.target
 ```
 
-### Generate Systemd Unit File
+## Generate Systemd Unit File
 
 | Variable                 | Default          | Example                                                          |
 |--------------------------|------------------|------------------------------------------------------------------|
 | PORT                     |                  | 3128                                                             |
 | VOLUME_HOME              | /opt/docker      | /opt/data                                                        |
-| VERSION                  | 1.0              | latest                                                           |                                                           |
-| SQUID_CACHE_PEER_HOST    |                  | proxy.domain.com                                                             |
+|                          |                  |                                                                  |                                                           |
+| SQUID_CACHE_PEER_HOST    |                  | proxy.domain.com                                                 |
 | SQUID_CACHE_PEER_PORT    |                  | 8080                                                             |
 
 ```bash
+# generate template.service
 docker run --rm \
   -e PORT=3128 \
   -e VOLUME_HOME=/opt/docker \
